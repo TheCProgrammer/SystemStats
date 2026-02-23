@@ -8,37 +8,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
-/* You may want to change those values depending on the filepath of those files
-  * I probably should have used a command for this, But I went with the file way
-*/
+/* You may want to change those values depending on the filepath of those files */
 
 char *tempfile = "/sys/class/thermal/thermal_zone0/temp";
+char *acstatus = "/sys/class/power_supply/AC/online";
 
-
-char *batterycmd = "acpi -a";
-
-FILE* open_popenfp() {
-  return popen(batterycmd, "r");
+FILE* openacfp() {
+  return fopen(acstatus, "r");
 }
 
-void handle_fpError(FILE* fp) {
+void checkfp_error(FILE* fp) {
   if (!fp) {
     perror("fopen");
-    exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);    
   }
 }
 
 void handlebattery() {
-  /* Used popen() instead of system() to find the output of the command */
-  FILE *fp = open_popenfp();
-  handle_fpError(fp);
+  FILE* fp = openacfp();
+  checkfp_error(fp);
 
-  char commandout[200];
+  char buffer[2]; // 1 or 2 + NULL terminator
+  fread(buffer, sizeof(buffer), 1, fp);
 
-  while (fgets(commandout, sizeof(commandout), fp) != NULL) {
-
-  } 
+  if (strstr(buffer, "0")) { // if AC is not connected
+    
+  }
 }
 
 
