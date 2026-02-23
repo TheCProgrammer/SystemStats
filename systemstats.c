@@ -32,7 +32,7 @@ void handle_fpError(FILE* fp) {
   }
 }
 
-void handlebattery(char *buffer) {
+void handlebattery() {
   /* Used popen() instead of system() to find the output of the command */
   open_popenfp();
 }
@@ -50,7 +50,6 @@ int main() {
   printf("SystemStats -- A powerful system stats warning application\n");
 
   char tempbuffer[30];
-  char batterybuffer[30];
   printf("Monitoring...\n");
 
   FILE* tempfp = NULL;
