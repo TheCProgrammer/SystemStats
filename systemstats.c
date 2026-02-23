@@ -37,10 +37,8 @@ void handlebattery() {
   char commandout[200];
 
   while (fgets(commandout, sizeof(commandout), fp) != NULL) {
-    printf("%s\n", commandout);
+
   } 
-  
-  
 }
 
 
@@ -82,6 +80,8 @@ int main() {
     if (temp >= 80) {
       handlehightemp(temp);
     }
+
+    handlebattery();
 
     fclose(tempfp);    
     usleep(2000); // sleep for 2 seconds to reduce CPU usage
