@@ -34,6 +34,12 @@ void handlebattery() {
   FILE *fp = open_popenfp();
   handle_fpError(fp);
 
+  char commandout[200];
+
+  while (fgets(commandout, sizeof(commandout), fp) != NULL) {
+    printf("%s\n", commandout);
+  } 
+  
   
 }
 
