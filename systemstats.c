@@ -9,11 +9,34 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-/* You may want to change those values depending on your machine
-  * Those were the values that worked on my machine
+/* You may want to change those values depending on the filepath of those files
+  * I probably should have used a command for this, But I went with the file way
 */
 
-char *tempfile = "/sys/class/thermal/thermal_zone0/temp"; 
+char *tempfile = "/sys/class/thermal/thermal_zone0/temp";
+
+
+char *batterycmd = "acpi -a";
+
+FILE* open_popenfp() {
+  FILE* fp = NULL;
+  fp = popen(batterycmd, "r");
+
+  return fp;
+}
+
+void handle_fpError(FILE* fp) {
+  if (!fp) {
+    perror("fopen");
+    exit(EXIT_FAILURE);
+  }
+}
+
+void handlebattery(char *buffer) {
+  /* Used popen() instead of system() to find the output of the command */
+  open_popenfp();
+}
+
 
 void handlehightemp(int temp) {
   char warnmessage[100];
