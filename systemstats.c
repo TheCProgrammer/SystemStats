@@ -19,10 +19,7 @@ char *tempfile = "/sys/class/thermal/thermal_zone0/temp";
 char *batterycmd = "acpi -a";
 
 FILE* open_popenfp() {
-  FILE* fp = NULL;
-  fp = popen(batterycmd, "r");
-
-  return fp;
+  return popen(batterycmd, "r");
 }
 
 void handle_fpError(FILE* fp) {
@@ -34,7 +31,10 @@ void handle_fpError(FILE* fp) {
 
 void handlebattery() {
   /* Used popen() instead of system() to find the output of the command */
-  open_popenfp();
+  FILE *fp = open_popenfp();
+  handle_fpError(fp);
+
+  
 }
 
 
