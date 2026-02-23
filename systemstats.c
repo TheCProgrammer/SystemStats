@@ -14,10 +14,17 @@
 
 char *tempfile = "/sys/class/thermal/thermal_zone0/temp";
 char *acstatus = "/sys/class/power_supply/AC/online";
+char *batcapacity = "/sys/class/power_supply/BAT0/capacity";
 
-FILE* openacfp() {
-  return fopen(acstatus, "r");
-}
+FILE* openfp(char *mode) { // shouldn't need to worry about the warning (about not returning anything) here because we will always supply the function with a mode
+  if (strcmp(mode, "acstatus") == 0) {
+    return fopen(acstatus, "r");   
+  }
+
+  else if (strcmp(mode, "batcapacity") == 0) {
+    return fopen(batcapacity, "r");       
+  }
+} 
 
 void checkfp_error(FILE* fp) {
   if (!fp) {
@@ -26,15 +33,38 @@ void checkfp_error(FILE* fp) {
   }
 }
 
+int checkbatpercent() { // returns 1 if the battery capacity is <= 10, returns 0 otherwise
+  FILE* batpercentfp = openfp("batcapacity"); 
+  checkfp_error(batpercentfp);
+
+  char buffer[4]; // 3 numbers + NULL terminator (e.g. 100, 20, 10, ...)
+  int batcapacity = atoi(buffer);  
+
+  if (batcapacity == 0) { // atoi() returns 0 on error, The percentage will never be 0 because then the device would have already shutdowned
+    fprintf(stderr, "Cannot convert the string (from the temperature file) to an integer, It is un-likely for this error to happen\n"); // it will never do that unless your CPU temp is 0 (which will never happen)
+    exit(EXIT_FAILURE);
+  }
+
+  else if (batcapacity <= 10) { // shouldn't need an else if here because the last if will exit the program anyways
+    return 1; 
+  }
+
+  else {
+    return 0;
+  }
+}
+
 void handlebattery() {
-  FILE* fp = openacfp();
-  checkfp_error(fp);
+  FILE* acstatusfp = openfp("acstatus");
+  checkfp_error(acstatusfp);
 
   char buffer[2]; // 1 or 2 + NULL terminator
-  fread(buffer, sizeof(buffer), 1, fp);
+  fread(buffer, sizeof(buffer), 1, acstatusfp);
 
-  if (strstr(buffer, "0")) { // if AC is not connected
-    
+  int batcapacity = 0;
+
+  if (strcmp(buffer, "0") == 0) { // if AC is not connected
+    batcapacity = checkbatpercent();    
   }
 }
 
