@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdbool.h>
 
 /* You may want to change those values depending on the filepath of those files */
 
@@ -49,11 +50,11 @@ int checkbatpercent() { // returns 1 if the battery capacity is <= 10, returns 0
   batcapacity = atoi(buffer);
 
   if (batcapacity == 0) { // atoi() returns 0 on error, The percentage will never be 0 because then the device would have already shutdowned
-    fprintf(stderr, "Cannot convert the string (from the temperature file) to an integer, It is un-likely for this error to happen\n"); // it will never do that unless your CPU temp is 0 (which will never happen)
+    fprintf(stderr, "Cannot convert the string (from the battery file) to an integer, It is un-likely for this error to happen\n"); // it will never do that unless your CPU temp is 0 (which will never happen)
     exit(EXIT_FAILURE);
   }
 
-  else if (batcapacity <= 10) { // shouldn't need an else if here because the last if will exit the program anyways
+  if (batcapacity >= 10) {
     return 1; 
   }
 
@@ -64,7 +65,7 @@ int checkbatpercent() { // returns 1 if the battery capacity is <= 10, returns 0
   fclose(batpercentfp);
 }
 
-void handlebattery() {
+void handlebattery() {    
   acstatusfp = openfp("acstatus");
   checkfp_error(acstatusfp);
 
@@ -85,8 +86,6 @@ void handlebattery() {
   fclose(acstatusfp);
 }
 
-
-
 void handlehightemp(int temp) {
   char warnmessage[100];
   snprintf(warnmessage, sizeof(warnmessage), "%s %d %s %s", "espeak-ng \"High CPU temprature warning: ", temp, "°Celsius", "\""); // don't forget the quotes
@@ -95,7 +94,24 @@ void handlehightemp(int temp) {
   printf("High CPU temprature warning: %d°C\n", temp);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+  if (argc != 2) {
+    fprintf(stderr, "USAGE: %s <laptop-or-desktop>\n", argv[0]);
+    return -1;
+  }
+
+  char *mode = argv[1];
+  bool runningLaptop = false;
+  
+  if (strcmp(mode, "laptop") == 0) {
+    runningLaptop = true;
+  }
+
+  else if (strcmp(mode, "laptop") != 0 && strcmp(mode, "desktop") != 0) {
+    fprintf(stderr, "Invalid mode.\nUSAGE: %s <laptop-or-desktop>\n", argv[0]);    
+    return -1;
+  }
+   
   printf("SystemStats -- A powerful system stats warning application\n");
 
   char tempbuffer[30];
@@ -126,7 +142,9 @@ int main() {
       handlehightemp(temp);
     }
 
-    handlebattery();
+    if (runningLaptop) {
+      handlebattery();
+    }
 
     fclose(tempfp);    
     usleep(2000); // sleep for 2 seconds to reduce CPU usage
