@@ -28,7 +28,7 @@ FILE* openfp(char *mode) { // shouldn't need to worry about the warning (about n
     return fopen(acstatus, "r");   
   }
 
-  else if (strcmp(mode, "batcapacity") == 0) {
+  else {
     return fopen(batcapacity_file, "r");       
   }
 } 
@@ -55,14 +55,14 @@ int checkbatpercent() { // returns 1 if the battery capacity is <= 10, returns 0
   }
 
   if (batcapacity >= 10) {
+    fclose(batpercentfp);  
     return 1; 
   }
 
   else {
+    fclose(batpercentfp);      
     return 0;
   }
-
-  fclose(batpercentfp);
 }
 
 void handlebattery() {    
