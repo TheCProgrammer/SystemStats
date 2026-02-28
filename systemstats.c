@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
   }
 
   else if (strcmp(mode, "laptop") != 0 && strcmp(mode, "desktop") != 0) {
-    fprintf(stderr, "Invalid mode.\nUSAGE: %s <laptop-or-desktop>\n", argv[0]);    
+    fprintf(stderr, "Invalid mode\nUSAGE: %s <laptop-or-desktop>\n", argv[0]);    
     return -1;
   }
    

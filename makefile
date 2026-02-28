@@ -1,5 +1,8 @@
+build-debug:
+	cc -Wall -Wextra -Wunreachable-code -o systemstats systemstats.c 
+
 build:
-	gcc -o systemstats systemstats.c
+	cc -o systemstats systemstats.c
 
 # If the first argument is "run"...
 ifeq (run,$(firstword $(MAKECMDGOALS)))
