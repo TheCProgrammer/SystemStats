@@ -28,9 +28,7 @@ FILE* openfp(char *mode) { // shouldn't need to worry about the warning (about n
     return fopen(acstatus, "r");   
   }
 
-  else {
-    return fopen(batcapacity_file, "r");       
-  }
+  return fopen(batcapacity_file, "r");       
 } 
 
 void checkfp_error(FILE* fp) {
@@ -59,10 +57,7 @@ int checkbatpercent() { // returns 1 if the battery capacity is <= 10, returns 0
     return 1; 
   }
 
-  else {
-    fclose(batpercentfp);      
-    return 0;
-  }
+  return 0;
 }
 
 void handlebattery() {    
@@ -107,7 +102,8 @@ int main(int argc, char *argv[]) {
     runningLaptop = true;
   }
 
-  else if (strcmp(mode, "laptop") != 0 && strcmp(mode, "desktop") != 0) {
+  else if (strcmp(mode, "laptop") != 0 && strcmp(mode, "desktop") != 0) { /* because we don't need to do anything if desktop is chosen, Because the code only checks for runningLaptop
+                                                                          the user could have typed 'desktop' but because we don't have an if for that. that's why i do this */ 
     fprintf(stderr, "Invalid mode\nUSAGE: %s <laptop-or-desktop>\n", argv[0]);    
     return -1;
   }
