@@ -23,8 +23,8 @@ int batcapacity = 0;
 FILE* batpercentfp = NULL;
 FILE* acstatusfp = NULL;
 
-FILE* openfp(char *mode) { // shouldn't need to worry about the warning (about not returning anything) here because we will always supply the function with a mode
-  if (strcmp(mode, "acstatus") == 0) {
+FILE* openfp(char *mode) {   
+	if (strcmp(mode, "acstatus") == 0) {
     return fopen(acstatus, "r");   
   }
 
